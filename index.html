@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>
+            Tic-Tac-Toe
+        </h1>
+        <p>Play Anywhere with Anyone</p>
+    </header>
+    <main>
+        <section class="taking-input">
+            <form action="">
+                <p>Select Mode: </p>
+                <label for="human">Human</label>
+                <input type="radio" name="choice" id="human" value="human">
+                <label for="computer">Computer</label>
+                <input type="radio" name="choice" id="computer" value="computer">
+                <button type="submit" class="button">Play</button>
+            </form>
+        </section>
+
+        <section class="displaying-board">
+            <div class="board-container">
+                <div class="board">
+                      <div data-idx = "0" data-x="0" data-y="0" class = "chunk"></div>
+                      <div data-idx = "1" data-x="0" data-y="1" class = "chunk"></div>
+                      <div data-idx = "2" data-x="0" data-y="2" class = "chunk"></div>
+                      <div data-idx = "3" data-x="1" data-y="0" class = "chunk"></div>
+                      <div data-idx = "4" data-x="1" data-y="1" class = "chunk"></div>
+                      <div data-idx = "5" data-x="1" data-y="2" class = "chunk"></div>
+                      <div data-idx = "6" data-x="2" data-y="0" class = "chunk"></div>
+                      <div data-idx = "7" data-x="2" data-y="1" class = "chunk"></div>
+                      <div data-idx = "8" data-x="2" data-y="2" class = "chunk"></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="backgroundBlur">
+
+        </div>
+
+
+
+    </main>
+    
+</body>
+<script src="script.js"></script>
+</html>
