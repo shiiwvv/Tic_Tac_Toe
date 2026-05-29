@@ -6,17 +6,26 @@ const chunk = document.querySelectorAll('.chunk');
 
 const winnerDisplayCard = document.createElement('div');
 winnerDisplayCard.classList.add('winner-display');
+const h2 = document.createElement('h2');
+const p = document.createElement('p');
+const button = document.createElement('button');
+button.innerHTML = `Restart`;
+button.classList.add('restart');
+winnerDisplayCard.appendChild(h2);
+winnerDisplayCard.appendChild(p);
+winnerDisplayCard.appendChild(button);
+
 
 const boardIdx = [
-    {status : false , x : 0,y : 0,},
-    {status : false ,x : 0,y : 1,},
-    {status : false ,x : 0,y : 2,},
-    {status : false , x : 1,y : 0,},
-    {status : false , x : 1,y : 1,},
-    {status : false , x : 1,y : 2,},
-    {status : false , x : 2,y : 0,},
-    {status : false , x : 2,y : 1,},
-    {status : false , x : 2,y : 2,}
+    {status : false ,x : 0,y : 0,index : 0},
+    {status : false ,x : 0,y : 1,index : 1},
+    {status : false ,x : 0,y : 2,index : 2},
+    {status : false ,x : 1,y : 0,index : 3},
+    {status : false ,x : 1,y : 1,index : 4},
+    {status : false ,x : 1,y : 2,index : 5},
+    {status : false ,x : 2,y : 0,index : 6},
+    {status : false ,x : 2,y : 1,index : 7},
+    {status : false ,x : 2,y : 2,index : 8}
 ];
 
 let grid = Array.from({length : 3} , () =>{
@@ -65,39 +74,42 @@ function handleClick(event){
 }
 
 function UserPlays(targetBlock){
-    console.log("UserPlay");
-    
+
     const idx = targetBlock.dataset.idx;
     const x = Number(targetBlock.dataset.x);
     const y = Number(targetBlock.dataset.y);
+
+    if(boardIdx[idx].status) return;
+
     grid[x][y] = turn;
     markMove(targetBlock ,idx);
-    
-    if(moves >= 5) calculateWinner();
+
 }
 
-function computerPlays(targetBlock){
-    console.log("ComputerPlay");
-    if(computerThinking) return;
+
+async function computerPlays(targetBlock){
+
+    if(computerThinking == true) return;
+    computerThinking = true;
+
     const idx = targetBlock.dataset.idx;
     const x = Number(targetBlock.dataset.x);
     const y = Number(targetBlock.dataset.y);
+
+    if(boardIdx[idx].status) return;
     grid[x][y] = turn;
     markMove(targetBlock ,idx);
 
-    computerThinking = true;
 
     if(computerThinking){
-        computerMakesMove();
+        await computerMakesMove();
     }
 
     computerThinking = false;
 
-    if(moves >= 5) calculateWinner();
 }
 
 function markMove(target , idx){
-    console.log("markMove");
     boardIdx[idx].status = true;
     console.log((boardIdx));
     if(turn == 1){
@@ -179,35 +191,33 @@ function markMove(target , idx){
 </svg>
 `;
     }
-    turn = (turn === 0) ? 1 : 0;
     moves += 1;
+    if(moves >= 5) calculateWinner();
+    turn = (turn === 0) ? 1 : 0;
 }
 
 async function computerMakesMove(){
-
     await new Promise(resolve => setTimeout(resolve , 1000));
 
-    let x;
-    let y;
-    let idx;
-    while(true){
-        const randomIdx = Math.floor(Math.random() * 8);
-        console.log(`randomIdx: ${randomIdx}`);
-        if(boardIdx[randomIdx].status != true){
-            x = boardIdx[randomIdx].x;
-            y = boardIdx[randomIdx].y;
-            idx = randomIdx;
-            break;
-        }
+    const available = boardIdx.filter(cell => !cell.status);
+
+    if(available.length === 0){
+        return;
     }
 
+    const randomIdx = available[Math.floor(Math.random() * available.length)].index;
+    
+    let x;
+    let y;
+    x = boardIdx[randomIdx].x;
+    y = boardIdx[randomIdx].y;
+
+
     grid[x][y] = turn;
-    console.log('computerMakesMove');
-    markMove(chunk[idx] , idx);
+    markMove(chunk[randomIdx] , randomIdx);
 }
 
 function calculateWinner(){
-    console.log("calculating winner");
     //Checking Row Wise
     for(let row = 0 ; row < 3 ; row++){
         let sum = 0;
@@ -260,26 +270,22 @@ function calculateWinner(){
 }
 
 function displayWinner(winner){
-    console.log("Winner is" , winner);
-
+    p.textContent = `Press Restart To Start New Game`;
     //Either Player wins
     if(winner === 0 || winner === 3){
-        winnerDisplayCard.innerHTML = `
-            <h2>${(winner == 0) ? "Player - 2" : "Player - 1"}</h2>
-            <p>Want to Play Again</p>
-            <button class="restart">Restart</button>
-        `;
+        if(computerPlay){
+            h2.textContent = `${(turn == 1) ? "Player - 1" : "Computer"} Won!!`;
+        }
+        else{
+            h2.textContent = `${(turn == 1) ? "Player - 1" : "Player - 2"} Won!!`;
+        }
     }
     //Draw..
     else{
-        winnerDisplayCard.innerHTML = `
-            <h2>it's a Draw</h2>
-            <p>Play Again to find out who wins</p>
-            <button class="restart">Restart</button>
-        `;
+        h2.textContent = `it's a Draw`;
+        p.textContent = `Start again and find who's the winner`;
     }
 
-    backgroundBlur.classList.add('enable');
     main.appendChild(winnerDisplayCard);
     endGame();
 }
@@ -316,5 +322,13 @@ function startGame(event){
                 grid[row][col] = '.';
             }
         }
+
+        boardIdx.forEach((item) =>{
+            item.status = false;
+        })
+
+        turn = 1;
     }
+
+
 }
