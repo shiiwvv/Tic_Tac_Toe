@@ -96,5 +96,12 @@ form{
     z-index: 100;
 }
 
-
+@media only screen and (max-width : 430px){
+    .board{
+        display: grid;
+        grid-template-columns: repeat(3 , 20vw);
+        grid-template-rows: repeat(3 , 20vw);
+        gap: 10px;
+    }
+}
 
